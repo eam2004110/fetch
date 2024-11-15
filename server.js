@@ -1,20 +1,29 @@
-// server.js
 import { createServer } from "http";
-import https from "https";
 import fetch from "node-fetch";
 const PORT = process.env.PORT || 3000;
 
 const server = createServer(async (req, res) => {
   const { method, url, headers } = req;
 
-  if (url.startsWith("/http")) {
-    const targetUrl = url.slice(1, url.length);
+  // Set CORS headers to allow all origins
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle preflight requests (OPTIONS)
+  if (method === "OPTIONS") {
+    res.writeHead(204); // No content
+    return res.end();
+  }
+
+  if (url.startsWith("/api/fetch/")) {
+    const targetUrl = url.slice(11, url.length); // Extract the target URL
     try {
       const response = await fetch(targetUrl);
-      let string = response.text();
+      const text = await response.text();
       res.writeHead(200, { "Content-Type": "text/plain" });
-      res.end(string);
-    } catch {
+      res.end(text);
+    } catch (error) {
       res.writeHead(404, { "Content-Type": "text/plain" });
       res.end("Not Found");
     }

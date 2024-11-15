@@ -1,10 +1,15 @@
 {
-  "name": "node-proxy-server",
+  "name": "proxy-server",
   "version": "1.0.0",
   "description": "A simple Node.js server to bypass CORS restrictions",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "dependencies": {}
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
 }

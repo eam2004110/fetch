@@ -35,8 +35,10 @@ const server = createServer(async (req, res) => {
       res.end("Not Found");
     }
   } else {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("Not Found");
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end(
+      "<input type='text' id='input'><div id='displayData' style='background-color:gray; color:white;'></div><script>let input=document.getElementById('input');const displayData=document.getElementById('displayData');input.onkeydown=async(e)=>{if(e.key=='Enter'){try{const req=await fetch('https://fetch-pr16wkqqc-meds-projects-8ac21d67.vercel.app/'+input.value.trim());const textData=await req.text();displayData.innerText=textData;}catch{};input.value='';}}</script>"
+    );
   }
 });
 

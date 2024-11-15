@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  const { url } = req.query; // Get the URL from the query parameters
-
+  let { url } = req.query; // Get the URL from the query parameters
+  url = decodeURIComponent(url);
   if (url && url.startsWith("http")) {
     // Ensure URL is provided and starts with "http"
     try {

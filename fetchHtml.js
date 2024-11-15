@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       res.end(text);
     } catch (error) {
       res.writeHead(500, { "Content-Type": "text/plain" });
-      res.end("Error: Unable to fetch the target URL");
+      res.end("Error: Unable to fetch the target URL" + error);
     }
   } else {
     res.writeHead(400, { "Content-Type": "text/plain" });

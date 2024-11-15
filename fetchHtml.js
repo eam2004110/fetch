@@ -17,6 +17,10 @@ export default async function handler(req, res) {
       // Validate that the URL starts with 'http'
       const response = await fetch(url);
       const text = await response.text();
+      // Enable CORS for all origins
+      res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
 
       res.status(200).send(text); // Respond with the HTML content
     } else {
@@ -27,11 +31,9 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error("Error fetching URL:", error);
-    res
-      .status(500)
-      .json({
-        error: "Error: Unable to fetch the target URL",
-        message: error.message,
-      });
+    res.status(500).json({
+      error: "Error: Unable to fetch the target URL",
+      message: error.message,
+    });
   }
 }

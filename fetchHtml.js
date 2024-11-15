@@ -2,22 +2,36 @@ import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   let { url } = req.query; // Get the URL from the query parameters
-  url = decodeURIComponent(url);
-  if (url && url.startsWith("http")) {
-    // Ensure URL is provided and starts with "http"
-    try {
+
+  // Check if url is defined before decoding
+  if (!url) {
+    console.error("No 'url' parameter found in the query.");
+    res.status(400).json({ error: "Invalid or missing 'url' parameter" });
+    return;
+  }
+
+  try {
+    url = decodeURIComponent(url); // Decode URL
+
+    if (url && url.startsWith("http")) {
+      // Validate that the URL starts with 'http'
       const response = await fetch(url);
       const text = await response.text();
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      res.end(text);
-    } catch (error) {
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      res.end("Error: Unable to fetch the target URL" + error);
-    }
-  } else {
-    console.error(req.query);
 
-    res.writeHead(400, { "Content-Type": "text/plain" });
-    res.end("Error: Invalid or missing 'url' parameter");
+      res.status(200).send(text); // Respond with the HTML content
+    } else {
+      console.error("Invalid URL format:", url);
+      res
+        .status(400)
+        .json({ error: "Invalid 'url' format. It must start with http" });
+    }
+  } catch (error) {
+    console.error("Error fetching URL:", error);
+    res
+      .status(500)
+      .json({
+        error: "Error: Unable to fetch the target URL",
+        message: error.message,
+      });
   }
 }

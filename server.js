@@ -5,17 +5,24 @@ const PORT = process.env.PORT || 3000;
 const server = createServer(async (req, res) => {
   const { method, url, headers } = req;
 
-  // Set CORS headers to allow all origins
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  // Handle preflight requests (OPTIONS)
-  if (method === "OPTIONS") {
-    res.writeHead(204); // No content
-    return res.end();
+  if (req.method === "OPTIONS") {
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    res.writeHead(204);
+    res.end();
+    return;
   }
-
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; media-src *; img-src *; connect-src *"
+  );
   if (url.startsWith("/api/fetch/")) {
     const targetUrl = url.slice(11, url.length); // Extract the target URL
     try {

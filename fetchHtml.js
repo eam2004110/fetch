@@ -15,6 +15,8 @@ export default async function handler(req, res) {
       res.end("Error: Unable to fetch the target URL" + error);
     }
   } else {
+    console.error(req.query);
+
     res.writeHead(400, { "Content-Type": "text/plain" });
     res.end("Error: Invalid or missing 'url' parameter");
   }

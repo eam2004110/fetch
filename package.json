@@ -1,14 +1,14 @@
 {
-  "name": "proxy-server",
-  "version": "1.0.0",
-  "description": "A simple Node.js server to bypass CORS restrictions",
-  "main": "server.js",
+  "name": "vercel-node-fetch-api",
+  "version": "2.0.0",
+  "description": "A simple API to fetch HTML from external websites to bypass CORS restrictions",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "vercel start"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "EAM",
+  "license": "MIT",
   "dependencies": {
     "node-fetch": "^3.3.2"
   }

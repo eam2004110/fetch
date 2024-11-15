@@ -1,9 +1,15 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "/fetchHtml.js",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
-      "src": "/index.html",
-      "dest": "server.js"
+      "src": "/fetchHtml",
+      "dest": "/fetchHtml.js"
     }
   ]
 }

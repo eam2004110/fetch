@@ -1,20 +1,23 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  let { url, options } = req.query; // Get the URL from the query parameters
+  let { url, options } = JSON.parse(req.body); // Get the URL from the query parameters
   let args = [null, null];
   // Check if url is defined before decoding
   if (!url) {
     console.error("No 'url' parameter found in the query.");
     res.status(400).json({ error: "Invalid or missing 'url' parameter" });
     return;
+  } else if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed. Use POST." });
+    return;
   }
 
   try {
-    args[0] = decodeURIComponent(url); // Decode URL
+    args[0] = url; // Decode URL
     try {
       if (options) {
-        args[1] = JSON.parse(decodeURIComponent(options));
+        args[1] = options;
         args[1]["method"] = "GET";
       } else {
         args[1] = { method: "GET" };
@@ -24,7 +27,7 @@ export default async function handler(req, res) {
     }
     if (url && url.startsWith("http")) {
       // Validate that the URL starts with 'http'
-      console.error(...args);
+      console.log(...args);
       const response = await fetch(...args);
       const text = await response.text();
       // Enable CORS for all origins

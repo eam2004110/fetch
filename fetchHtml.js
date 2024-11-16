@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       max-width: calc(100vw - 10px);
       max-height: calc(100vh - 110px);
       border: 1px solid aqua;
-      verflow-x:hidden;
+      overflow-x:hidden;
       overflow-y:auto;
     }
   </style>

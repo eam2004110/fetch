@@ -13,7 +13,12 @@ export default async function handler(req, res) {
   try {
     args[0] = decodeURIComponent(url); // Decode URL
     try {
-      if (options) args[1] = JSON.parse(decodeURIComponent(options));
+      if (options) {
+        args[1] = JSON.parse(decodeURIComponent(options));
+        args[1]["method"] = "GET";
+      } else {
+        args[1] = { method: "GET" };
+      }
     } catch {
       args.length = 1;
     }

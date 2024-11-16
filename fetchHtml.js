@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     }
     if (url && url.startsWith("http")) {
       // Validate that the URL starts with 'http'
-      console.error(JSON.stringify(args[1]));
+      console.error(args[1]);
       const response = await fetch(...args);
       const text = await response.text();
       // Enable CORS for all origins

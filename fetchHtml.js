@@ -1,18 +1,6 @@
 import fetch from "node-fetch";
 export default async function handler(req, res) {
-  let { url, options } = req.body; // Get the URL from the query parameters
-  let args = [null, null];
-  // Check if url is defined before decoding
-  // Enable CORS for all origins
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
-
-  if (!url) {
-    console.error("No 'url' parameter found in the query.");
-    res.status(400).json({ error: "Invalid or missing 'url' parameter" });
-    return;
-  } else if (req.method == "GET") {
+  if (req.method == "GET") {
     res.status(200).send(`<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -82,6 +70,19 @@ export default async function handler(req, res) {
     return;
   } else if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed. Use POST." });
+    return;
+  }
+  let { url, options } = req.body; // Get the URL from the query parameters
+  let args = [null, null];
+  // Check if url is defined before decoding
+  // Enable CORS for all origins
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
+
+  if (!url) {
+    console.error("No 'url' parameter found in the query.");
+    res.status(400).json({ error: "Invalid or missing 'url' parameter" });
     return;
   }
 

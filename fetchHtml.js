@@ -36,6 +36,7 @@ export default async function handler(req, res) {
       res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
 
       res.status(200).send(text); // Respond with the HTML content
+      res.end("done");
     } else {
       console.error("Invalid URL format:", url);
       res

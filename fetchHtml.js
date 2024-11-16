@@ -3,8 +3,6 @@ import fetch from "node-fetch";
 export default async function handler(req, res) {
   let { url, options } = req.query; // Extract query parameters
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   let t = await fetch("https://pixabay.com/images/search/sky/", {
     headers: {
       accept:

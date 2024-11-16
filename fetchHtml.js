@@ -1,31 +1,4 @@
 import fetch from "node-fetch";
-
-const cookieJar = {}; // Store cookies for different URLs
-
-// Helper function to parse and store cookies
-function updateCookies(url, setCookieHeader) {
-  if (!setCookieHeader) return;
-  const domain = new URL(url).hostname;
-
-  // Initialize cookies for the domain
-  cookieJar[domain] = cookieJar[domain] || {};
-
-  setCookieHeader.forEach((cookieStr) => {
-    const [cookie] = cookieStr.split(";"); // Take the cookie before the first ';'
-    const [key, value] = cookie.split("=");
-    cookieJar[domain][key.trim()] = value.trim();
-  });
-}
-
-// Helper function to retrieve cookies for a domain
-function getCookies(url) {
-  const domain = new URL(url).hostname;
-  if (!cookieJar[domain]) return "";
-  return Object.entries(cookieJar[domain])
-    .map(([key, value]) => `${key}=${value}`)
-    .join("; ");
-}
-
 export default async function handler(req, res) {
   if (req.method == "GET") {
     res.status(200).send(`<!DOCTYPE html>
@@ -101,13 +74,13 @@ export default async function handler(req, res) {
     res.status(405).json({ error: "Method not allowed. Use POST." });
     return;
   }
-
-  let { url, options } = req.body;
-
+  let { url, options } = req.body; // Get the URL from the query parameters
+  let args = [null, null];
+  // Check if url is defined before decoding
   // Enable CORS for all origins
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
 
   if (!url) {
     console.error("No 'url' parameter found in the query.");
@@ -116,31 +89,30 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Default options
-    options = options || { headers: {}, method: "GET" };
-    options.headers = options.headers || {};
-
-    // Add cookies to the request
-    options.headers["Cookie"] = getCookies(url);
-
-    // Add other default headers
-    options.headers["User-Agent"] =
+    args[0] = url; // Decode URL
+    if (!options) {
+      options = { headers: {}, method: "GET" };
+    }
+    args[1] = options;
+    args[1]["headers"] ? "" : (args[1]["headers"] = {});
+    args[1]["headers"]["User-Agent"] =
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
-    options.headers["Accept"] =
+    args[1]["headers"]["Cookie"] = "cookie";
+    args[1]["headers"]["Accept"] =
       "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-    options.headers["Accept-Language"] = "en-US,en;q=0.9";
-    options.headers["Connection"] = "keep-alive";
+    args[1]["headers"]["Accept-Language"] = "en-US,en;q=0.9";
+    args[1]["headers"]["Connection"] = "keep-alive";
+    args[1]["headers"]["Upgrade-Insecure-Requests"] = "1";
+    args[1]["headers"]["Cache-Control"] = "max-age=0";
+    args[1]["method"] = "GET";
 
-    if (url.startsWith("http")) {
-      console.log("Fetching:", url, "with options:", options);
-      const response = await fetch(url, options);
-
-      // Update cookies from the response
-      const setCookieHeader = response.headers.raw()["set-cookie"];
-      updateCookies(url, setCookieHeader);
-
+    if (url && url.startsWith("http")) {
+      // Validate that the URL starts with 'http'
+      console.log(...args);
+      const response = await fetch(...args);
       const text = await response.text();
-      res.status(200).send(text);
+      res.status(200).send(text); // Respond with the HTML content
+      res.end("done");
     } else {
       console.error("Invalid URL format:", url);
       res

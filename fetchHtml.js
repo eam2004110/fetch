@@ -18,6 +18,10 @@ export default async function handler(req, res) {
     try {
       if (options) {
         args[1] = options;
+        args[1]["headers"] ? "" : (args[1]["headers"] = {});
+        args[1]["headers"]["User-Agent"] =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
+        args[1]["headers"]["Cookie"] = "cookie";
         args[1]["method"] = "GET";
       } else {
         args[1] = { method: "GET" };

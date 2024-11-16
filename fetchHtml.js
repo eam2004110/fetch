@@ -32,6 +32,8 @@ export default async function handler(req, res) {
     }
     #urlInput {
       height: 50px;
+      overflow-x:hidden;
+      overflow-y:auto;
     }
     #content {
       min-width: 300px;

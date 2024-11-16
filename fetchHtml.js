@@ -98,6 +98,8 @@ export default async function handler(req, res) {
       // Validate that the URL starts with 'http'
       console.log(...args);
       const response = await fetch(...args);
+      console.log(response.headers);
+
       const text = await response.text();
       res.status(200).send(text); // Respond with the HTML content
       res.end("done");

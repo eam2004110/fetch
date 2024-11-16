@@ -1,9 +1,7 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  console.log(typeof req.body, req.body);
-
-  let { url, options } = JSON.parse(req.body); // Get the URL from the query parameters
+  let { url, options } = req.body; // Get the URL from the query parameters
   let args = [null, null];
   // Check if url is defined before decoding
   if (!url) {

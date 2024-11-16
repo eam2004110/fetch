@@ -2,7 +2,6 @@ import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   let { url, options } = req.query; // Extract query parameters
-  res.setHeader("Access-Control-Allow-Origin", "*");
   let t = await fetch("https://pixabay.com/images/search/sky/", {
     headers: {
       accept:

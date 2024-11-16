@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import puppeteer from "puppeteer";
 export default async function handler(req, res) {
   let { url, options } = req.body; // Get the URL from the query parameters
   let args = [null, null];
@@ -39,21 +38,12 @@ export default async function handler(req, res) {
       console.log(...args);
       const response = await fetch(...args);
       const text = await response.text();
-
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.goto(url);
-      const html = await page.content(); // This retrieves the HTML after running JavaScript
-      console.log(html);
-
-      await browser.close();
-
       // Enable CORS for all origins
       res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
       res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
 
-      res.status(200).send(html); // Respond with the HTML content
+      res.status(200).send(text); // Respond with the HTML content
       res.end("done");
     } else {
       console.error("Invalid URL format:", url);

@@ -91,21 +91,9 @@ export default async function handler(req, res) {
   try {
     args[0] = url; // Decode URL
     if (!options) {
-      options = { headers: {}, method: "GET" };
+      options = { method: "GET" };
     }
     args[1] = options;
-    args[1]["headers"] ? "" : (args[1]["headers"] = {});
-    args[1]["headers"]["User-Agent"] =
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
-    args[1]["headers"]["Cookie"] = "cookie";
-    args[1]["headers"]["Accept"] =
-      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-    args[1]["headers"]["Accept-Language"] = "en-US,en;q=0.9";
-    args[1]["headers"]["Connection"] = "keep-alive";
-    args[1]["headers"]["Upgrade-Insecure-Requests"] = "1";
-    args[1]["headers"]["Cache-Control"] = "max-age=0";
-    args[1]["method"] = "GET";
-
     if (url && url.startsWith("http")) {
       // Validate that the URL starts with 'http'
       console.log(...args);

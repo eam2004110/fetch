@@ -1,14 +1,8 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  let { url } = req.query; // Get the URL from the query parameters
-  let { options } = req.query;
+  let { url, options } = req.query; // Get the URL from the query parameters
   let args = [null, null];
-  try {
-    if (options) args[1] = JSON.parse(decodeURIComponent(options));
-  } catch {
-    args.length = 1;
-  }
   // Check if url is defined before decoding
   if (!url) {
     console.error("No 'url' parameter found in the query.");
@@ -18,6 +12,11 @@ export default async function handler(req, res) {
 
   try {
     args[0] = decodeURIComponent(url); // Decode URL
+    try {
+      if (options) args[1] = JSON.parse(decodeURIComponent(options));
+    } catch {
+      args.length = 1;
+    }
     if (url && url.startsWith("http")) {
       // Validate that the URL starts with 'http'
       const response = await fetch(...args);

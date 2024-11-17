@@ -10,9 +10,6 @@
   "author": "EAM",
   "license": "MIT",
   "dependencies": {
-    "chrome-aws-lambda": "^10.1.0",
-    "express": "^4.21.1",
-    "node-fetch": "^3.3.2",
-    "puppeteer-core": "^10.4.0"
+    "node-fetch": "^3.3.2"
   }
 }

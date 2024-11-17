@@ -2,10 +2,10 @@
   "name": "render-node-fetch-api",
   "version": "2.0.0",
   "description": "A simple API to fetch HTML from external websites to bypass CORS restrictions",
-  "main": "fetchHtml.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node fetchHtml.js"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "EAM",

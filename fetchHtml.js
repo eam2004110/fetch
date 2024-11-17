@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import http from "http";
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization"
+      "Content-Type, Authorization, Accept"
     );
     res.writeHead(204);
     res.end();
@@ -107,6 +107,13 @@ const server = http.createServer((req, res) => {
         res.end(
           JSON.stringify({ error: "Invalid or missing 'url' parameter" })
         );
+        return;
+      }
+      try {
+        new URL(url);
+      } catch (e) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Invalid URL" }));
         return;
       }
       args[0] = url;

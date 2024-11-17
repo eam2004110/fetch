@@ -110,7 +110,17 @@ const server = http.createServer((req, res) => {
         return;
       }
       try {
-        new URL(url);
+        const isSafeUrl = (url) => {
+          const allowedProtocols = ["http:", "https:"];
+          const parsedUrl = new URL(url);
+          return allowedProtocols.includes(parsedUrl.protocol);
+        };
+
+        if (!isSafeUrl(url)) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Invalid or restricted URL" }));
+          return;
+        }
       } catch (e) {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "Invalid URL" }));

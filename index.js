@@ -1,22 +1,22 @@
-import { createServer } from "http";
-import { launch } from "puppeteer-core";
-import {
-  args as _args,
-  executablePath as _executablePath,
-} from "chrome-aws-lambda"; // For running Chrome on cloud platforms like AWS Lambda
+const express = require("express");
+const puppeteer = require("puppeteer-core");
+const chrome = require("chrome-aws-lambda"); // For running Chrome on serverless environments (e.g., AWS Lambda)
 
-// Fetch HTML content using puppeteer-core and chrome-aws-lambda
+const app = express();
+app.use(express.json());
+
+// Function to fetch HTML content using puppeteer-core
 async function fetchHtml(url) {
   let browser;
   try {
     const options = {
       headless: true,
-      args: _args,
-      executablePath: await _executablePath,
-      userDataDir: "/tmp/user_data", // Temporary storage for user data in serverless environments
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
+      userDataDir: "/tmp/user_data", // Temporary storage for user data in Lambda environments
     };
 
-    browser = await launch(options);
+    browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
     const htmlContent = await page.content(); // Get the HTML content of the page
@@ -31,46 +31,26 @@ async function fetchHtml(url) {
   }
 }
 
-// HTTP server to handle requests
-const server = createServer(async (req, res) => {
-  if (req.method === "POST" && req.url === "/fetch") {
-    let body = "";
+// API route to fetch HTML
+app.post("/fetch", async (req, res) => {
+  const { url } = req.body;
+  if (!url) {
+    return res.status(400).json({ error: "URL is required" });
+  }
 
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
-
-    req.on("end", async () => {
-      try {
-        const { url } = JSON.parse(body);
-        if (!url) {
-          res.writeHead(400, { "Content-Type": "application/json" });
-          return res.end(JSON.stringify({ error: "URL is required" }));
-        }
-
-        const htmlContent = await fetchHtml(url);
-        if (htmlContent) {
-          res.writeHead(200, { "Content-Type": "application/json" });
-          return res.end(JSON.stringify({ html: htmlContent }));
-        } else {
-          res.writeHead(500, { "Content-Type": "application/json" });
-          return res.end(
-            JSON.stringify({ error: "Failed to fetch HTML content" })
-          );
-        }
-      } catch (error) {
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: error.message }));
-      }
-    });
-  } else {
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Not Found" }));
+  try {
+    const htmlContent = await fetchHtml(url);
+    if (htmlContent) {
+      return res.json({ html: htmlContent });
+    } else {
+      return res.status(500).json({ error: "Failed to fetch HTML content" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 });
 
-// Server listens on a port
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

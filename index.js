@@ -71,7 +71,7 @@ const server = http.createServer((req, res) => {
         urlInput.value = "";
         content.innerText = "";
         const resp = await fetch(
-          "https://fetch-meds-projects-8ac21d67.vercel.app/fetchHtml",
+          "https://fetch-8e1d.onrender.com/fetch",
           {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -88,9 +88,11 @@ const server = http.createServer((req, res) => {
 </html>
 `);
     return;
-  } else if (req.method !== "POST") {
+  } else if (req.method !== "POST" || req.url !== "/fetch") {
     res.writeHead(405, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: "Method not allowed. Use POST." }));
+    res.end(
+      JSON.stringify({ error: "Method not allowed. Use POST ,/fetch url." })
+    );
     return;
   }
   let body = "";

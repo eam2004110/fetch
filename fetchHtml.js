@@ -105,7 +105,9 @@ const server = http.createServer((req, res) => {
       if (!url) {
         console.error("No 'url' parameter found in the query.");
         res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.parse({ error: "Invalid or missing 'url' parameter" }));
+        res.end(
+          JSON.stringify({ error: "Invalid or missing 'url' parameter" })
+        );
         return;
       }
       args[0] = url;
@@ -122,14 +124,16 @@ const server = http.createServer((req, res) => {
         console.error("Invalid URL format:", url);
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(
-          JSON.parse({ error: "Invalid 'url' format. It must start with http" })
+          JSON.stringify({
+            error: "Invalid 'url' format. It must start with http",
+          })
         );
       }
     } catch (error) {
       console.error("Error fetching URL:", error);
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(
-        JSON.parse({
+        JSON.stringify({
           error: "Error: Unable to fetch the target URL",
           message: error.message,
         })

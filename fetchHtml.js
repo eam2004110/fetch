@@ -1,7 +1,25 @@
 import fetch from "node-fetch";
-export default async function handler(req, res) {
+import http from "http";
+
+const server = http.createServer((req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; media-src *; img-src *; connect-src *"
+  );
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    res.writeHead(204);
+    res.end();
+    return;
+  }
   if (req.method == "GET") {
-    res.status(200).send(`<!DOCTYPE html>
+    res.writeHead(200);
+    res.end(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -71,49 +89,52 @@ export default async function handler(req, res) {
 `);
     return;
   } else if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed. Use POST." });
+    res.writeHead(405, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Method not allowed. Use POST." }));
     return;
   }
-  let { url, options } = req.body; // Get the URL from the query parameters
-  let args = [null, null];
-  // Check if url is defined before decoding
-  // Enable CORS for all origins
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these HTTP methods
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Allow Content-Type header
-
-  if (!url) {
-    console.error("No 'url' parameter found in the query.");
-    res.status(400).json({ error: "Invalid or missing 'url' parameter" });
-    return;
-  }
-
-  try {
-    args[0] = url; // Decode URL
-    if (!options) {
-      options = { method: "GET" };
+  let body = "";
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+  req.on("end", async () => {
+    try {
+      const parsedBody = JSON.parse(body);
+      let { url, options } = parsedBody;
+      let args = [null, null];
+      if (!url) {
+        console.error("No 'url' parameter found in the query.");
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.parse({ error: "Invalid or missing 'url' parameter" }));
+        return;
+      }
+      args[0] = url;
+      if (!options) {
+        options = { method: "GET" };
+      }
+      args[1] = options;
+      if (url && url.startsWith("http")) {
+        const response = await fetch(...args);
+        const text = await response.text();
+        res.writeHead(200);
+        res.end(text);
+      } else {
+        console.error("Invalid URL format:", url);
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(
+          JSON.parse({ error: "Invalid 'url' format. It must start with http" })
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching URL:", error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(
+        JSON.parse({
+          error: "Error: Unable to fetch the target URL",
+          message: error.message,
+        })
+      );
     }
-    args[1] = options;
-    if (url && url.startsWith("http")) {
-      // Validate that the URL starts with 'http'
-      console.log(...args);
-      const response = await fetch(...args);
-      console.log(response.headers);
-
-      const text = await response.text();
-      res.status(200).send(text); // Respond with the HTML content
-      res.end("done");
-    } else {
-      console.error("Invalid URL format:", url);
-      res
-        .status(400)
-        .json({ error: "Invalid 'url' format. It must start with http" });
-    }
-  } catch (error) {
-    console.error("Error fetching URL:", error);
-    res.status(500).json({
-      error: "Error: Unable to fetch the target URL",
-      message: error.message,
-    });
-  }
-}
+  });
+});
+server.listen(PORT);

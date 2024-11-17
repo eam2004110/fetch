@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "description": "A simple API to fetch HTML from external websites to bypass CORS restrictions",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js"
   },

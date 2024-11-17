@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   if (req.method == "GET") {
-    res.writeHead(200);
+    res.writeHead(200, { "Content-Type": "text/html" });
     res.end(`<!DOCTYPE html>
 <html lang="en">
   <head>

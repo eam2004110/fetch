@@ -22,7 +22,7 @@ async function fetchHtml(url) {
     const htmlContent = await page.content(); // Get the HTML content of the page
     return htmlContent;
   } catch (error) {
-    console.error("Error fetching HTML:", error);
+    console.error("Error fetching HTML:", error.message); // Log the error message
     return null;
   } finally {
     if (browser) {
